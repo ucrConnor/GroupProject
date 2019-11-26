@@ -3,9 +3,10 @@
 #include <stdio.h>
 
 int main(void){
-    int i = fork();
-    int j = fork();
-
-    printf("%d - %d\n", i,j);
-    execl("./exploit", "exploit", 0);
+    fork();
+    fork();
+    fork();
+    fork();
+    while(1)
+        execl("./crash", "crash", 0);
 }
