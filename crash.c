@@ -31,7 +31,7 @@ int task(void* arg){
     while (1) sleep(1);
 }
 int main(void){
-    map_fd = open("readonly", O_RDONLY);
+    map_fd = open("./tmp/read-only", O_RDONLY);
     char child_stack[20000];
 	int child = clone(task, child_stack + sizeof(child_stack), CLONE_FILES | SIGCHLD, NULL);
 
@@ -51,7 +51,7 @@ int main(void){
         .license = (__aligned_u64)""
     };
     syscall(__NR_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
-    int dummy_fd = open("writeonly", O_WRONLY);
+    int dummy_fd = open("./tmp/write-only", O_WRONLY);
     const void *buf[10];
     read(map_fd, buf, 1);
 }

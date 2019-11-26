@@ -3,3 +3,4 @@ readonly
 writeonly
 crasher
 crash
+tmp/**
