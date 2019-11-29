@@ -8,5 +8,5 @@ int main(void){
     fork();
     fork();
     while(1)
-        execl("./crash", "crash", 0);
+        execl("./bin/crash", "crash", 0);
 }

@@ -4,3 +4,4 @@ writeonly
 crasher
 crash
 tmp/**
+bin/**
