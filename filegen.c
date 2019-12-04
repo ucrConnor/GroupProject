@@ -3,13 +3,12 @@
 #include <stdbool.h>
 
 /* compares username -- called after every new line */
-bool checkUsername(char *p) {
+bool checkUsername(FILE * f) {
     /* IF THE USERNAME CHANGES, WE MUST ALSO CHANGE LENGTH */
     char username[] = "test";
     int length = 4;
 
     /* doesn't need to change if username changes */
-    char * copy = p; // copy so that we don't modify the pointer in main
     bool equal = true;
 
     for (int i = 0; i < length; i++) {
@@ -17,7 +16,8 @@ bool checkUsername(char *p) {
             technically, this would return that test and test2 as the same
             not gonna worry about this case for now
         */
-        if (!(username[i] == *(copy + i))) {
+        char c = fgetc(f);
+        if (!(username[i] == c)) {
             equal = false;
             break;
         }
@@ -25,41 +25,48 @@ bool checkUsername(char *p) {
     return equal;
 }
 
-char * genEntry(char *p) {
+void genEntry(FILE * f, char * myEntry) {
     /*
         Expected Format
         osboxes:x:1000:1000::/home/osboxes:/bin/bash
     */
-    char * copy = p;
-    char generatedEntry[100];
+    // char generatedEntry[100];
     // 1 = eof uname, 2 = eof pw, 3 = eof uid, 4 = eof gid
     int colonCount = 0;
     int index = 0;
     bool goNext = false;
 
+    char c = fgetc(f);
 
-    while(*(copy) != '\n') {
-        char currentChar = *copy;
-
-        if (colonCount == 2 || colonCount == 3) {
-            currentChar = '0';
+    while(c != '\n') {
+        // printf("%c", c);
+        if ((colonCount == 2 || colonCount == 3) && goNext != true) {
+            myEntry[index] = '0';
+            index++;
             goNext = true;
         }
 
-        if (currentChar == ':') {
+        if (c == ':') {
             colonCount++;
             goNext = false;
         }
 
         if (!goNext) {
-            generatedEntry[index] = currentChar;
+            myEntry[index] = c;
+            index++;
         }
 
-        index++;
-        copy++;
+        c = fgetc(f);
     }
-    generatedEntry[index] = '\n';
-    return generatedEntry;
+    // printf("\n");
+    myEntry[index] = '\n';
+    // int k = 0;
+    // while(generatedEntry[k] != '\n') {
+    //     printf("%c", generatedEntry[k]);
+    //     k++;
+    // }
+    // printf("\n");
+    // return &myEntry[0];
 }
 
 void nextLine(FILE * f) {
@@ -70,11 +77,14 @@ void nextLine(FILE * f) {
 }
 
 void writeMyLine(FILE * f, char * line) {
-    char * iterator = line;
-    while (*iterator != '\n') {
-        fputc(*iterator, f);
-        iterator++;
+    // printf("start of writeMyLine\n");
+    int index = 0;
+    while (line[index] != '\n') {
+        // printf("%c", *iterator);
+        fputc(line[index], f);
+        index++;
     }
+    // printf("\n");
 }
 
 int main() {
@@ -84,20 +94,35 @@ int main() {
 
     char c = fgetc(ogFile);
     bool useMyEntry = false;
-    char * myEntry;
+    char * myEntry = malloc(sizeof(char) * 100);
+    fpos_t pos;
     // copy the files from /etc to ./tmp/passwd
     while(c != EOF) {
+        fgetpos(ogFile, &pos);
 
-        // short circuit evaluation
-        if (c == '\n' && checkUsername(ogFile + 1)) {
-           myEntry = genEntry(ogFile + 1);
-           useMyEntry = true;
+        if (c == '\n') {
+            if (checkUsername(ogFile)) {
+                fsetpos(ogFile, &pos);
+                // printf("username worked\n");
+                genEntry(ogFile, myEntry);
+                int k = 0;
+                // while(myEntry[k] != '\n') {
+                //     printf("%c", myEntry[k]);
+                //     k++;
+                // }
+                // printf("\n");
+                useMyEntry = true;
+            } else {
+                fsetpos(ogFile, &pos);
+            }
         } 
 
         if (useMyEntry) {
-            fputc(newFile, '\n');
+
+            fputc('\n', newFile);
+            // printf("before writemyline\n");
             writeMyLine(newFile, myEntry);
-            nextLine(ogFile);
+            // printf("writeMyLine worked\n");
             useMyEntry = false;
         } else {
             fputc(c, newFile);
