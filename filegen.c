@@ -84,6 +84,7 @@ void writeMyLine(FILE * f, char * line) {
         fputc(line[index], f);
         index++;
     }
+    fputc('\n', f);
     // printf("\n");
 }
 
