@@ -1,5 +1,5 @@
 
-all: scripts
+all: scripts passwd
 	gcc crash.c -o ./bin/crash
 	gcc crasher.c -o ./bin/crasher
 	gcc exploit.c -o ./bin/exploit
@@ -8,6 +8,10 @@ all: scripts
 clean:
 	fusermount -u fuse_mount
 	rm -rf fuse_mount
+
+passwd:
+	gcc filegen.c -o ./bin/filegen
+	./bin/filegen
 
 scripts:
 	rm -rf bin
