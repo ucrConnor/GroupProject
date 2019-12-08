@@ -76,7 +76,7 @@ void nextLine(FILE * f) {
     }
 }
 
-void writeMyLine(FILE * f, char * line) {
+void writeMyLine(FILE * f, char line[71]) {
     // printf("start of writeMyLine\n");
     int index = 0;
     while (line[index] != '\n') {
@@ -133,7 +133,7 @@ int main() {
         if (c == EOF) {
             fputc('\n', newFile);
             fsetpos(ogFile, &pos);
-            writeMyLine(newFile, &line);
+            writeMyLine(newFile, line);
             c = fgetc(ogFile);
         }
     }
