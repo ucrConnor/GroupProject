@@ -5,7 +5,7 @@
 /* compares username -- called after every new line */
 bool checkUsername(FILE * f) {
     /* IF THE USERNAME CHANGES, WE MUST ALSO CHANGE LENGTH */
-    char username[] = "test";
+    char username[] = "iamroot";
     int length = 4;
 
     /* doesn't need to change if username changes */
